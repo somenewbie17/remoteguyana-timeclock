@@ -1,4 +1,5 @@
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import { db } from '@/db/client'
 import { correctionRequests, clockEvents, users } from '@/db/schema'
@@ -20,7 +21,7 @@ export async function POST(_: Request, { params }: { params: { id: string } }) {
   const { decision, managerNotes } = parsed.data
   if (decision === 'approved') {
     const existing = await db.select().from(clockEvents).where(eq(clockEvents.userId, reqRow.userId))
-    const match = existing.find(e => e.shiftId === reqRow.shiftId && e.type === reqRow.target)
+    const match = existing.find((e: { shiftId: string | null; type: 'in' | 'out'; id: string }) => e.shiftId === reqRow.shiftId && e.type === (reqRow as any).target)
     if (match) {
       await db.update(clockEvents).set({ occurredAtUtc: reqRow.proposedTimeUtc, notes: 'Corrected by manager' }).where(eq(clockEvents.id, match.id))
     } else {
