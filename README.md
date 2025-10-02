@@ -132,8 +132,20 @@ pnpm dev
 Visit http://localhost:3000
 
 ## Cron reminders (Vercel Cron)
-- Create a Vercel Cron job to hit `/api/cron/reminders` every 5 minutes.
-- Add header `X-CRON-SECRET: <your-secret>` and set `CRON_SECRET` env in Vercel.
+- vercel.json schedules the endpoint every 5 minutes:
+
+	vercel.json
+	{
+		"crons": [
+			{ "path": "/api/cron/reminders", "schedule": "*/5 * * * *" }
+		]
+	}
+
+- Secret header must be set in Vercel UI (vercel.json cannot add headers).
+- The route accepts either header style:
+	- X-CRON-SECRET: $CRON_SECRET
+	- Authorization: Bearer $CRON_SECRET
+- The reminder window is ±3.5 minutes to tolerate 5-minute cadence jitter.
 
 ## Resend email
 - Set `RESEND_API_KEY` in env.
@@ -152,7 +164,13 @@ pnpm test
 
 ## Deploy to Vercel
 - Import this repo into Vercel
-- Set environment variables
+- Set environment variables:
+	- TURSO_DATABASE_URL
+	- TURSO_AUTH_TOKEN
+	- RESEND_API_KEY
+	- RESEND_FROM (optional; defaults to no-reply@remoteguyana.dev)
+	- CRON_SECRET
+	- NEXTAUTH_URL (e.g., https://remoteguyana-timeclock.vercel.app)
 - Configure Vercel Cron
 - Deploy
 

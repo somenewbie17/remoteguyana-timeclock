@@ -9,8 +9,11 @@
     "start": "next start",
     "lint": "next lint || true",
     "db:push": "drizzle-kit push",
+    "db:migrate": "tsx scripts/migrate.ts",
+  "db:apply-sql": "tsx scripts/apply-sql.ts",
     "db:generate": "drizzle-kit generate",
     "seed": "tsx scripts/seed.ts",
+    "demo": "tsx scripts/demo-setup.ts",
     "test": "vitest run --reporter=dot",
     "test:ui": "vitest"
   },
