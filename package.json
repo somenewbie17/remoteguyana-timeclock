@@ -1,0 +1,45 @@
+{
+  "name": "remoteguyana-timeclock",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint || true",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "seed": "tsx scripts/seed.ts",
+    "test": "vitest run --reporter=dot",
+    "test:ui": "vitest"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.7.0",
+    "@lucia-auth/adapter-drizzle": "^1.0.0",
+    "arg": "^5.0.2",
+    "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0",
+    "drizzle-orm": "^0.33.0",
+    "lucia": "^3.0.0",
+    "next": "^14.2.5",
+    "oslo": "^1.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "resend": "^3.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "autoprefixer": "^10.4.19",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.23.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "tsx": "^4.15.7",
+    "typescript": "^5.6.2",
+    "vitest": "^2.0.5"
+  }
+}

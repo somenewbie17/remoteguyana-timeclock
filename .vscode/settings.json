@@ -1,0 +1,15 @@
+{
+  // Keep CSS validation, but silence Tailwind-specific at-rule warnings in editors
+  "css.validate": true,
+  "css.lint.unknownAtRules": "ignore",
+
+  // Helpful hints if you install Tailwind CSS IntelliSense
+  "tailwindCSS.experimental.configFile": "tailwind.config.ts",
+  "tailwindCSS.includeLanguages": {
+    "postcss": "css",
+    "javascript": "javascript",
+    "typescript": "typescript",
+    "typescriptreact": "html",
+    "javascriptreact": "html"
+  }
+}
