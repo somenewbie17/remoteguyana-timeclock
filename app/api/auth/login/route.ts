@@ -1,33 +1,47 @@
+// app/api/auth/login/route.ts
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
 import { NextResponse } from 'next/server'
-import { loginSchema } from '@/lib/validators'
+import { db } from '@/db/client'
+import { users } from '@/db/schema'
+import { eq } from 'drizzle-orm'
+import { verifyPassword } from '@/lib/hash'
 
 export async function POST(req: Request) {
   try {
-    const json = await req.json()
-    const parsed = loginSchema.safeParse(json)
-    if (!parsed.success) return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
-    const { email, password } = parsed.data
+    console.log('[login] start')
 
-    const { db } = await import('@/db/client')
-    const { users } = await import('@/db/schema')
-    const { eq } = await import('drizzle-orm')
+    const { email, password } = await req.json()
+    const e = String(email || '').trim().toLowerCase()
+    const p = String(password || '')
 
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1)
-    if (!user) return NextResponse.json({ error: 'Invalid credentials' }, { status: 400 })
+    console.log('[login] input parsed for', e)
 
-    const { verifyPassword } = await import('@/lib/hash')
-    const ok = await verifyPassword(user.passwordHash, password)
-    if (!ok) return NextResponse.json({ error: 'Invalid credentials' }, { status: 400 })
+    const row = await db.query.users.findFirst({
+      where: eq(users.email, e),
+      columns: { id: true, passwordHash: true, role: true, firstName: true, lastName: true }
+    })
 
-    const { lucia } = await import('@/auth/lucia')
-    const session = await lucia.createSession(user.id, {})
-    const sessionCookie = lucia.createSessionCookie(session.id)
-    const res = NextResponse.json({ ok: true })
-    res.headers.set('Set-Cookie', `${sessionCookie.name}=${sessionCookie.value}; Path=/; HttpOnly; SameSite=Lax${process.env.NODE_ENV==='production'?'; Secure':''}`)
-    return res
-  } catch (e) {
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    console.log('[login] querying user')
+
+    if (!row) return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 })
+
+    console.log('[login] user found', row.id)
+
+    if (!row.passwordHash?.startsWith('$argon2')) {
+      console.error('[login] invalid hash format', row.passwordHash?.slice?.(0, 12))
+      return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 })
+    }
+
+    // IMPORTANT: verify(hash, password)
+    const ok = await verifyPassword(row.passwordHash, p)
+    if (!ok) return NextResponse.json({ ok: false, error: 'Invalid credentials' }, { status: 401 })
+
+    // TODO: restore Lucia session creation and set cookie here
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('Login error:', err)
+    return NextResponse.json({ ok: false, error: 'Server error' }, { status: 500 })
   }
 }

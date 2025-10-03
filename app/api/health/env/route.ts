@@ -1,14 +1,17 @@
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+import { createClient } from '@libsql/client';
 
 export async function GET() {
-  const vars = [
-    'TURSO_DATABASE_URL',
-    'TURSO_AUTH_TOKEN',
-    'RESEND_API_KEY',
-    'RESEND_FROM',
-    'CRON_SECRET',
-  ] as const
-  const present = Object.fromEntries(vars.map((k) => [k, Boolean(process.env[k])]))
-  return Response.json({ ok: true, present })
+  try {
+    const client = createClient({
+      url: process.env.TURSO_DATABASE_URL!,
+      authToken: process.env.TURSO_AUTH_TOKEN!,
+    });
+    await client.execute('select 1');
+    return Response.json({ ok: true });
+  } catch (e: any) {
+    return Response.json({ ok: false, error: String(e?.message || e) }, { status: 500 });
+  }
 }

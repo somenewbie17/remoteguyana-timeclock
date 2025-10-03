@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { db } from '@/db/client'
 import { users } from '@/db/schema'
 import { hashPassword } from '@/lib/hash'

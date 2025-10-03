@@ -12,7 +12,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:apply-sql": "tsx scripts/apply-sql.ts",
     "db:generate": "drizzle-kit generate",
-    "seed": "tsx scripts/seed.ts",
+  "seed": "DOTENV_CONFIG_PATH=.env.local tsx -r dotenv/config scripts/seed.ts",
     "seed:sql": "tsx scripts/emit-seed-sql.ts",
     "demo": "tsx scripts/demo-setup.ts",
     "add-user": "tsx scripts/add-user.ts",

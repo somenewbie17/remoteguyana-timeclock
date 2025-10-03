@@ -2,9 +2,9 @@ import { Lucia, TimeSpan } from 'lucia'
 import { cookies } from 'next/headers'
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
 import { db } from '@/db/client'
-import { sessions, userKeys } from '@/db/schema'
+import { sessions, users } from '@/db/schema'
 
-export const lucia = new Lucia(new DrizzleSQLiteAdapter(db, sessions, userKeys), {
+export const lucia = new Lucia(new DrizzleSQLiteAdapter(db, sessions, users), {
   sessionExpiresIn: new TimeSpan(30, 'd'),
   sessionCookie: {
     name: 'rg_session',
